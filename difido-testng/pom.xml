@@ -57,7 +57,12 @@
 			<artifactId>jersey-media-multipart</artifactId>
 			<version>2.9</version>
 		</dependency>
-
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>[6.8.8,)</version>
+      <scope>provided</scope>
+    </dependency>
 	</dependencies>
 	<build>
 		<plugins>
