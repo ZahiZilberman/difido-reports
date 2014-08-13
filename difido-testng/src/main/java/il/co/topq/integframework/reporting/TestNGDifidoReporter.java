@@ -6,9 +6,11 @@ import il.co.topq.difido.model.execution.MachineNode;
 import il.co.topq.difido.model.execution.ScenarioNode;
 import il.co.topq.difido.model.execution.TestNode;
 import il.co.topq.difido.model.test.TestDetails;
+import il.co.topq.integframework.utils.StringUtils;
 import il.co.topq.report.Configuration;
 import il.co.topq.report.Configuration.ConfigProps;
 
+import java.util.Date;
 import java.util.List;
 
 import org.testng.IReporter;
@@ -18,15 +20,22 @@ import org.testng.ITestResult;
 import org.testng.internal.IResultListener2;
 import org.testng.xml.XmlSuite;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 public class TestNGDifidoReporter extends org.testng.Reporter implements IReporter, IResultListener2 {
 
-	protected final DifidoClient client = DifidoClient.build(Configuration.INSTANCE.read(ConfigProps.BASE_URI));
+	protected DifidoClient client;// =
+									// DifidoClient.build(Configuration.INSTANCE.read(ConfigProps.BASE_URI));
 	protected int executionId;
 	protected int machineId;
 	protected int scenarioId = -1;
+	protected BiMap<ScenarioNode, ISuite> scenarioSuites = HashBiMap.create();
+
 	protected int testId;
 
 	public TestNGDifidoReporter() {
+		client = DifidoClient.build(Configuration.INSTANCE.read(ConfigProps.BASE_URI));
 		executionId = client.addExecution();
 		machineId = client.addMachine(executionId, new MachineNode(System.getProperty("user.name")));
 
@@ -34,10 +43,12 @@ public class TestNGDifidoReporter extends org.testng.Reporter implements IReport
 
 	@Override
 	public void onStart(ITestContext testContext) {
+		ScenarioNode scenarioNode = new ScenarioNode(testContext.getSuite().getName());
+		scenarioSuites.put(scenarioNode, testContext.getSuite());
 		if (scenarioId == -1) {
-			scenarioId = client.addRootScenario(executionId, machineId, new ScenarioNode(testContext.getSuite().getName()));
+			scenarioId = client.addRootScenario(executionId, machineId, scenarioNode);
 		} else {
-			client.addSubScenario(executionId, machineId, scenarioId, new ScenarioNode(testContext.getSuite().getName()));
+			client.addSubScenario(executionId, machineId, scenarioId, scenarioNode);
 		}
 
 	}
@@ -53,7 +64,8 @@ public class TestNGDifidoReporter extends org.testng.Reporter implements IReport
 		node.setStatus(in_progress);
 		testId = client.addTest(executionId, machineId, scenarioId, node);
 		TestDetails details = new TestDetails(result.getName());
-		details.setDescription(result.getTestName());
+		details.setDescription(StringUtils.either(result.getTestName()).or(result.getName()));
+		details.setTimeStamp(new Date().toString());
 		client.addTestDetails(executionId, machineId, scenarioId, testId, details);
 	}
 
