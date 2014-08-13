@@ -3,7 +3,7 @@ package il.co.topq.difido.model;
 public class Enums {
 
 	public enum Status {
-		in_progress, success, warning, failure, error
+		in_progress, success, warning, failure, error, skipped
 	}
 
 	public enum ElementType {
