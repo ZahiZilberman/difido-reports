@@ -18,7 +18,7 @@ import org.testng.ITestResult;
 import org.testng.internal.IResultListener2;
 import org.testng.xml.XmlSuite;
 
-public class TestNGReporter extends org.testng.Reporter implements IReporter, IResultListener2 {
+public class TestNGDifidoReporter extends org.testng.Reporter implements IReporter, IResultListener2 {
 
 	protected final DifidoClient client = DifidoClient.build(Configuration.INSTANCE.read(ConfigProps.BASE_URI));
 	protected int executionId;
@@ -26,7 +26,7 @@ public class TestNGReporter extends org.testng.Reporter implements IReporter, IR
 	protected int scenarioId = -1;
 	protected int testId;
 
-	public TestNGReporter() {
+	public TestNGDifidoReporter() {
 		executionId = client.addExecution();
 		machineId = client.addMachine(executionId, new MachineNode(System.getProperty("user.name")));
 
