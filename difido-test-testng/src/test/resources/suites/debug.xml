@@ -1,0 +1,7 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="dev" verbose="1">
+	<test name="test">
+	<classes><class name="il.co.topq.difido.automation_infra_tests.ReporterTests"></class>
+	</classes>
+	</test>
+</suite>
