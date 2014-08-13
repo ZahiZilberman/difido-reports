@@ -44,6 +44,13 @@ public class DifidoClient {
 		int executionId = Integer.parseInt(response.readEntity(String.class));
 		return executionId;
 	}
+	
+	public int getLastExecutionId(){
+		WebTarget executionsTarget = baseTarget.path("/executions/lastId");
+		String response = executionsTarget.request(MediaType.TEXT_PLAIN).get(String.class);
+		int executionId = Integer.parseInt(response);
+		return executionId;
+	}
 
 	public void endExecution(int executionId) {
 		WebTarget executionsTarget = baseTarget.path("/executions/" + executionId);
@@ -128,6 +135,16 @@ public class DifidoClient {
 				+ "/scenarios/" + scenarioId + "/tests/" + testId + "/details/element");
 		elementTarget.request().post(Entity.entity(element, MediaType.APPLICATION_JSON));
 	}
+	
+	public void addFile(int executionId, int machineId, int scenarioId, int testId, File uploadedFile) {
+		WebTarget fileTarget = baseTarget.path("/executions/" + executionId + "/machines/" + machineId
+				+ "/scenarios/" + scenarioId + "/tests/" + testId + "/details/file");
+		
+		FormDataMultiPart multiPart = new FormDataMultiPart();
+	    multiPart.bodyPart(new FileDataBodyPart("file", uploadedFile, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+		
+		fileTarget.request(MediaType.TEXT_PLAIN).post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA));
+	}
 
 	public ScenarioNode getScenario(int executionId, int machineId, int scenarioId) {
 		WebTarget scenariosTarget = baseTarget.path("/executions/" + executionId + "/machines/" + machineId
@@ -136,18 +153,6 @@ public class DifidoClient {
 		return scenario;
 	}
 	
-	public String uploadFile(File uploadedFile, String destinationDirRelativePath) {
-		
-		FormDataMultiPart multiPart = new FormDataMultiPart();
-	    multiPart.bodyPart(new FileDataBodyPart("file", uploadedFile, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-	    multiPart.field("destinationDirRelativePath", destinationDirRelativePath);
-		
-		WebTarget uploadTarget = baseTarget.path("/upload/file");
-		Response response = uploadTarget.request(MediaType.TEXT_PLAIN).post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA));
-
-		return response.readEntity(String.class);
-	}
-
 	public void close() {
 		
 	}

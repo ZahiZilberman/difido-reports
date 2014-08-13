@@ -25,3 +25,7 @@ lib
 
 #NetBeans files
 nbproject
+
+#Project files
+difido-server/difido-report-server/docRoot/reports
+
