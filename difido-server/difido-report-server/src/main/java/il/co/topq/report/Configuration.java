@@ -50,7 +50,7 @@ public enum Configuration {
 			configProperties.load(reader);
 
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Failure in reading filw " + CONFIG_PROP_NAME
+			log.log(Level.WARNING, "Failure in reading file " + CONFIG_PROP_NAME
 					+ ". Rolling back to default properties", e);
 		}
 
@@ -58,7 +58,7 @@ public enum Configuration {
 
 	private void useDefaultProperties() {
 		log.info("Using default properties");		
-		configProperties.put(ConfigProps.BASE_URI.getValue(), "http://localhost:8080/api/");
+		configProperties.put(ConfigProps.BASE_URI.getValue(), "http://localhost:8090/api/");
 		configProperties.put(ConfigProps.DOC_ROOT_FOLDER.getValue(), "docRoot");
 		try (FileOutputStream out = new FileOutputStream(new File(CONFIG_PROP_NAME))) {
 			configProperties.store(out, "Default difido server proerties");
